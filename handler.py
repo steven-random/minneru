@@ -29,22 +29,17 @@ def handler(event):
             text=True,
         )
 
-        if result.returncode != 0:
-            return {"error": result.stderr or "mineru process failed",
-                    "stdout": result.stdout}
-
-        # 列出输出目录所有文件，方便调试
         all_files = []
         for root, _, files in os.walk(output_dir):
             for f in files:
                 all_files.append(os.path.relpath(os.path.join(root, f), output_dir))
 
+        if result.returncode != 0:
+            return {"error": f"mineru failed (rc={result.returncode})\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}\nFILES:\n{all_files}"}
+
         md_files = glob.glob(os.path.join(output_dir, "**", "*.md"), recursive=True)
         if not md_files:
-            return {"error": "No markdown output produced",
-                    "stdout": result.stdout,
-                    "stderr": result.stderr,
-                    "output_files": all_files}
+            return {"error": f"No markdown output produced\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}\nFILES:\n{all_files}"}
 
         with open(md_files[0], "r", encoding="utf-8") as f:
             markdown = f.read()
