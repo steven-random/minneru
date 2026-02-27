@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -21,9 +21,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # 先装 CPU torch，再装 mineru[core]（官方推荐）
-ENV PIP_ONLY_BINARY=colorlog
-RUN pip install setuptools wheel && \
-    pip install torch --index-url https://download.pytorch.org/whl/cpu && \
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
