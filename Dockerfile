@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install pip==24.3.1
 
 # 先装 CPU torch，再装 mineru[core]（官方推荐）
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
