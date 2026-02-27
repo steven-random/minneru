@@ -2,6 +2,10 @@
 
 RunPod Serverless worker: PDF (base64) → MinerU → Markdown.
 
+Uses the MinerU CLI with `hybrid-auto-engine` backend. Model weights are
+downloaded automatically on first cold start and cached in the container's
+ephemeral storage.
+
 ## Input
 
 ```json
@@ -20,25 +24,26 @@ RunPod Serverless worker: PDF (base64) → MinerU → Markdown.
 }
 ```
 
-## Build
+## Build and push
 
 ```bash
-docker build -t mineru-serverless .
-# With a HuggingFace token (required for gated models):
-docker build --build-arg HF_TOKEN=hf_xxx -t mineru-serverless .
+docker build -t yourdockerhub/mineru-serverless .
+docker push yourdockerhub/mineru-serverless
 ```
 
-## Deploy
+## RunPod Serverless setup
 
-1. Push the image to a container registry accessible by RunPod.
-2. Create a RunPod Serverless endpoint pointing to the image.
-3. Set container disk to at least 20GB to accommodate model weights.
-4. Attach a GPU with CUDA 12.1+ support (A4000 or better recommended).
+1. Push the image to Docker Hub (or any public/private registry).
+2. Go to [RunPod Serverless](https://www.runpod.io/console/serverless).
+3. Click **New Endpoint**.
+4. Set **Container Image** to `yourdockerhub/mineru-serverless`.
+5. Set **Container Disk** to at least 20 GB (model weights cache).
+6. Select a GPU with CUDA 12.1+ support (A4000 or better recommended).
+7. Deploy.
 
-## Notes
+## Cold start note
 
-- The Docker image is large (~12–15 GB) due to embedded model weights.
-- Model weights are downloaded from HuggingFace at build time into the image layer, eliminating cold-start model fetching.
-- The first invocation per worker will incur CUDA initialization overhead (~10–30s depending on GPU).
-- Temporary files are written to `/tmp` and cleaned up after every request.
-- Images extracted from the PDF are discarded; only the markdown text is returned.
+The first invocation per worker downloads MinerU model weights (~5–10 GB)
+from HuggingFace. Subsequent requests on the same worker are fast. Set
+**Min Workers** to 1 in the RunPod endpoint settings to keep a worker warm
+and avoid repeated downloads.
