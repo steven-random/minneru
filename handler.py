@@ -24,17 +24,27 @@ def handler(event):
             f.write(base64.b64decode(pdf_b64))
 
         result = subprocess.run(
-            ["mineru", "-p", pdf_path, "-o", output_dir, "-b", "hybrid-auto-engine"],
+            ["mineru", "-p", pdf_path, "-o", output_dir, "-b", "pipeline"],
             capture_output=True,
             text=True,
         )
 
         if result.returncode != 0:
-            return {"error": result.stderr or "mineru process failed"}
+            return {"error": result.stderr or "mineru process failed",
+                    "stdout": result.stdout}
+
+        # 列出输出目录所有文件，方便调试
+        all_files = []
+        for root, _, files in os.walk(output_dir):
+            for f in files:
+                all_files.append(os.path.relpath(os.path.join(root, f), output_dir))
 
         md_files = glob.glob(os.path.join(output_dir, "**", "*.md"), recursive=True)
         if not md_files:
-            return {"error": "No markdown output produced"}
+            return {"error": "No markdown output produced",
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                    "output_files": all_files}
 
         with open(md_files[0], "r", encoding="utf-8") as f:
             markdown = f.read()
