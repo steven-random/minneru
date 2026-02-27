@@ -22,7 +22,7 @@ RUN pip install --upgrade pip
 
 # 先装 CPU torch，再装 mineru[core]（官方推荐）
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install "mineru[core]>=2.7.0" runpod && \
+    pip install "mineru[core]>=2.7.0" runpod --only-binary colorlog && \
     pip cache purge
 
 # 预下载模型（官方方式）
