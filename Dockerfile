@@ -3,7 +3,6 @@ FROM python:3.10
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV MINERU_DEVICE_MODE=cpu
-ENV MINERU_MODEL_SOURCE=local
 
 # 系统依赖
 RUN apt-get update && apt-get install -y \
@@ -25,12 +24,14 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
-# 初始化配置文件 + 预下载模型
-RUN echo '{}' > /root/.mineru.json && \
-    mineru-models-download -s huggingface -m all
+# 预下载模型（官方方式）
+RUN mineru-models-download -s huggingface -m all
 
 WORKDIR /app
 
 COPY handler.py .
+
+# 运行时设置 MINERU_MODEL_SOURCE=local（官方做法）
+ENV MINERU_MODEL_SOURCE=local
 
 CMD ["python3", "handler.py"]
