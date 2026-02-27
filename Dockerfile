@@ -17,7 +17,7 @@ RUN pip install --upgrade pip
 
 # 官方推荐：直接从 PyPI 安装
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install mineru runpod
+    pip install "mineru[all]" runpod
 
 WORKDIR /app
 
