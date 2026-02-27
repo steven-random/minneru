@@ -2,6 +2,7 @@ FROM python:3.10-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
+ENV MINERU_DEVICE_MODE=cpu
 
 # 系统依赖（mineru 运行需要）
 RUN apt-get update && apt-get install -y \
@@ -15,7 +16,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # 官方推荐：直接从 PyPI 安装
-RUN pip install mineru runpod
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install mineru runpod
 
 WORKDIR /app
 
