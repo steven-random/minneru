@@ -21,9 +21,9 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # 先装 CPU torch，再装 mineru[core]（官方推荐）
+ENV PIP_ONLY_BINARY=colorlog
 RUN pip install setuptools wheel && \
     pip install torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install colorlog --only-binary :all: && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
