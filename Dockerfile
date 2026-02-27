@@ -25,8 +25,9 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
-# 预下载模型（官方方式）
-RUN mineru-models-download -s huggingface -m all
+# 初始化配置文件 + 预下载模型
+RUN echo '{}' > /root/.mineru.json && \
+    mineru-models-download -s huggingface -m all
 
 WORKDIR /app
 

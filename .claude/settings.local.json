@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(D:/minneru/.venv1/Scripts/python.exe -c \"import dotenv; print\\(''dotenv ok''\\)\")",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:deepwiki.com)"
     ]
   }
 }
