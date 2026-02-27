@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(D:/minneru/.venv1/Scripts/python.exe -c \"import dotenv; print\\(''dotenv ok''\\)\")"
+      "Bash(D:/minneru/.venv1/Scripts/python.exe -c \"import dotenv; print\\(''dotenv ok''\\)\")",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
