@@ -8,7 +8,6 @@ import tempfile
 import runpod
 
 WORK_ROOT = os.environ.get("MINERU_WORK_DIR", "/tmp")
-BACKEND = os.environ.get("MINERU_BACKEND", "pipeline")
 
 
 def handler(event):
@@ -18,8 +17,6 @@ def handler(event):
     pdf_b64 = inp.get("pdf_base64")
     if not pdf_b64:
         return {"error": "Missing required field: input.pdf_base64"}
-
-    backend = inp.get("backend", BACKEND)
 
     work_dir = tempfile.mkdtemp(dir=WORK_ROOT)
     try:
@@ -33,7 +30,7 @@ def handler(event):
 
         # run MinerU
         result = subprocess.run(
-            ["mineru", "-p", pdf_path, "-o", output_dir, "-b", backend],
+            ["mineru", "-p", pdf_path, "-o", output_dir, "-b", "pipeline"],
             capture_output=True,
             text=True,
         )
