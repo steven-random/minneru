@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV MINERU_DEVICE_MODE=cpu
 
-# 系统依赖
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     libgl1 \
@@ -16,22 +16,21 @@ RUN apt-get update && apt-get install -y \
     && fc-cache -fv \
     && rm -rf /var/lib/apt/lists/*
 
-# 用 pip 24.x（pip 26 有 resolution-too-deep 和 colorlog 构建问题）
+# Pin pip (pip 26+ has resolution-too-deep and colorlog build issues)
 RUN pip install pip==24.3.1
 
-# 先装 CPU torch，再装 mineru[core]（官方推荐）
+# Install CPU PyTorch first, then MinerU
 RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
     pip install "mineru[core]>=2.7.0" runpod && \
     pip cache purge
 
-# 预下载模型（官方方式）
+# Pre-download models during build (avoids cold-start downloads)
 RUN mineru-models-download -s huggingface -m all
 
 WORKDIR /app
-
 COPY handler.py .
 
-# 运行时设置 MINERU_MODEL_SOURCE=local（官方做法）
+# Use pre-downloaded models at runtime
 ENV MINERU_MODEL_SOURCE=local
 
 CMD ["python3", "handler.py"]
